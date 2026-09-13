@@ -47,19 +47,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from benchmark_logs import PAARE, PO_DIR, SEQ_DIR, nur_complete, ohne_balken  # noqa: E402
-
-
-def _als_dfg(kanten, start, ende):
-    from pm4py.objects.dfg.obj import DFG
-    d = DFG()
-    for k, n in kanten.items():
-        d.graph[k] = n
-    for a, n in start.items():
-        d.start_activities[a] = n
-    for a, n in ende.items():
-        d.end_activities[a] = n
-    return d
+from benchmark_logs import PAARE, PO_DIR, SEQ_DIR, _als_dfg, nur_complete, ohne_balken  # noqa: E402
 
 
 def median_ms(funktion, laeufe: int) -> float:

@@ -21,8 +21,8 @@ scripts needed to reproduce its measurements.
 | `pm4py_bugfix/` | runtime patch for a bug in PM4Py's `iterparse` XES importer that drops `<list>` attributes (see below) |
 | `examples/` | the travel-agency example used throughout the thesis |
 | `data/` | small partially ordered logs: the example logs and the six evaluation logs |
-| `tests/` | unit tests, including the three constructed cases from the thesis' evaluation |
-| `scripts/` | measurement scripts behind the thesis' tables |
+| `tests/` | the three constructed cases from the thesis' evaluation: nested concurrency, the N-structure, self-concurrency (`python -m unittest discover -s tests`) |
+| `scripts/` | measurement scripts behind the thesis' tables: `benchmark_logs.py` (the six log pairs and shared helpers), `laufzeit_messen.py` (runtime of both paths, split into DFG construction and IM_D run), `reduktion_pruefen.py` (checks that the multiplicity sums of the partially ordered logs add up to the cases and events of the sequential logs), `anreicherung_vergleich.py` (ordinary against enriched DFG: edges, mutual pairs, self-loops, same tree?) |
 
 ## Installation
 
