@@ -3,8 +3,9 @@
 Each entry pairs a partially ordered log (one representative per partial-order
 variant, produced with the Configurable Concurrency Oracle) with the sequential
 log it was derived from. The files are expected under ``data/benchmark/po`` and
-``data/benchmark/seq`` of this repository; set ``BENCHMARK_DATA`` to point the
-scripts at another directory with the same two subfolders.
+``data/benchmark/seq`` of this repository (see ``data/README.md`` for where to
+get them); set ``BENCHMARK_DATA`` to point the scripts at another directory with
+the same two subfolders.
 """
 
 import os
@@ -24,6 +25,17 @@ PAARE = [
     ("roadtrafficfine", "roadtrafficfine_alpha_logwise_oneRperPoVar.xes", "Road_Traffic_Fine.xes"),
     ("teleclaims",      "teleclaims_alpha_logwise_oneRperPoVar.xes",      "teleclaims.xes"),
 ]
+
+
+def pruefe_daten(paare=None) -> None:
+    """Stop with a clear message if an evaluation log is missing."""
+    fehlend = [pfad for _, po, seq in (paare or PAARE)
+               for pfad in (PO_DIR / po, SEQ_DIR / seq) if not pfad.exists()]
+    if fehlend:
+        raise SystemExit(
+            "missing evaluation log(s):\n  " + "\n  ".join(str(f) for f in fehlend)
+            + "\nsee data/README.md for where to get them; BENCHMARK_DATA points "
+              "the scripts at another directory")
 
 
 def ohne_balken() -> dict:

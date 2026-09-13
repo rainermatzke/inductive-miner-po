@@ -32,11 +32,12 @@ logging.disable(logging.WARNING)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from benchmark_logs import PAARE, PO_DIR, SEQ_DIR, nur_complete, ohne_balken  # noqa: E402
+from benchmark_logs import PAARE, PO_DIR, SEQ_DIR, nur_complete, ohne_balken, pruefe_daten  # noqa: E402
 from pm4py_partorder import read_xes  # noqa: E402
 
 
 def main() -> int:
+    pruefe_daten()
     print(f"{'Log':16} | {'cases':>7} {'var.':>5} {'events':>7} | "
           f"{'traces':>6} {'events':>6} {'S mult':>7} {'mult*ev':>8} | reduction")
     print(f"{'':16} | {'sequential (complete)':^21} | {'partially ordered':^30} |")

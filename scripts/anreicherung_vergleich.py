@@ -24,7 +24,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from benchmark_logs import (PAARE, PO_DIR, SEQ_DIR, modell_partiell,  # noqa: E402
-                            modell_sequentiell, nur_complete, ohne_balken)
+                            modell_sequentiell, nur_complete, ohne_balken, pruefe_daten)
 
 
 def paare(kanten) -> set:
@@ -64,6 +64,7 @@ def main() -> int:
         print(f"no log matches {args.log}; known: {', '.join(n for n, _, _ in PAARE)}",
               file=sys.stderr)
         return 1
+    pruefe_daten(paarliste)
 
     print(f"{'Log':17} {'act.':5} {'edges seq':10} {'part.':6} {'only part.':11} "
           f"{'pairs seq/part.':16} {'loops':10} {'marked/new':13} "

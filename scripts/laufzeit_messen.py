@@ -47,7 +47,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from benchmark_logs import PAARE, PO_DIR, SEQ_DIR, _als_dfg, nur_complete, ohne_balken  # noqa: E402
+from benchmark_logs import (PAARE, PO_DIR, SEQ_DIR, _als_dfg, nur_complete,  # noqa: E402
+                            ohne_balken, pruefe_daten)
 
 
 def median_ms(funktion, laeufe: int) -> float:
@@ -87,6 +88,7 @@ def main() -> int:
         print(f"no log matches {args.log}; known: {', '.join(n for n, _, _ in PAARE)}",
               file=sys.stderr)
         return 1
+    pruefe_daten(paare)
     print(f"{'Log':16} | {'partial order/IM_D':>22} | {'total order/IM_D (variants)':>30} | all cases")
     print(f"{'':16} | {'traces':>6} {'build':>7} {'IM_D':>7} | "
           f"{'traces':>6} {'build':>7} {'IM_D':>7} {'equal?':>7} | {'cases':>7} {'build':>8}")

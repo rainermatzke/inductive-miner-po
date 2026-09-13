@@ -225,7 +225,8 @@ def main() -> int:
 
     dateien = sammle(args.pfade or [PO_DIR])
     if not dateien:
-        print("no XES file found", file=sys.stderr)
+        print(f"no XES file found under {args.pfade or [PO_DIR]} -- see data/README.md",
+              file=sys.stderr)
         return 1
 
     alle = []
