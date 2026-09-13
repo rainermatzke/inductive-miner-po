@@ -1,0 +1,397 @@
+<?xml version='1.0' encoding='utf-8'?>
+<log xmlns="http://www.xes-standard.org/" xes.version="1849-2016" xes.features="nested-attributes">
+	<extension name="Organizational" prefix="org" uri="http://www.xes-standard.org/org.xesext" />
+	<extension name="Time" prefix="time" uri="http://www.xes-standard.org/time.xesext" />
+	<extension name="Concept" prefix="concept" uri="http://www.xes-standard.org/concept.xesext" />
+	<extension name="Identity" prefix="identity" uri="http://www.xes-standard.org/identity.xesext" />
+	<string key="origin" value="reisebuero-csv" />
+	<trace>
+		<string key="concept:name" value="case_1" />
+		<event>
+			<string key="concept:name" value="Kundenanfrage" />
+			<date key="time:timestamp" value="2025-03-03T09:00:00+00:00" />
+			<string key="org:resource" value="Empfang" />
+			<int key="@@index" value="0" />
+			<int key="@@case_index" value="0" />
+			<int key="identity:id" value="0" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="1" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Beratung" />
+			<date key="time:timestamp" value="2025-03-03T09:25:00+00:00" />
+			<string key="org:resource" value="Anna" />
+			<int key="@@index" value="1" />
+			<int key="@@case_index" value="1" />
+			<int key="identity:id" value="1" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="2" />
+					<string key="1" value="3" />
+					<string key="2" value="4" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Hinflug suchen" />
+			<date key="time:timestamp" value="2025-03-03T09:55:00+00:00" />
+			<string key="org:resource" value="Ben" />
+			<int key="@@index" value="2" />
+			<int key="@@case_index" value="2" />
+			<int key="identity:id" value="2" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="5" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Rückflug suchen" />
+			<date key="time:timestamp" value="2025-03-03T09:59:00+00:00" />
+			<string key="org:resource" value="Frida" />
+			<int key="@@index" value="3" />
+			<int key="@@case_index" value="3" />
+			<int key="identity:id" value="3" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="5" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Hotel buchen" />
+			<date key="time:timestamp" value="2025-03-03T10:04:00+00:00" />
+			<string key="org:resource" value="Clara" />
+			<int key="@@index" value="4" />
+			<int key="@@case_index" value="4" />
+			<int key="identity:id" value="4" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="7" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Flugpaket erstellen" />
+			<date key="time:timestamp" value="2025-03-03T10:35:00+00:00" />
+			<string key="org:resource" value="Ben" />
+			<int key="@@index" value="5" />
+			<int key="@@case_index" value="5" />
+			<int key="identity:id" value="5" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="6" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Sitzplätze wählen" />
+			<date key="time:timestamp" value="2025-03-03T11:10:00+00:00" />
+			<string key="org:resource" value="Ben" />
+			<int key="@@index" value="6" />
+			<int key="@@case_index" value="6" />
+			<int key="identity:id" value="6" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="7" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Reiseunterlagen zusammenstellen" />
+			<date key="time:timestamp" value="2025-03-03T11:40:00+00:00" />
+			<string key="org:resource" value="Anna" />
+			<int key="@@index" value="7" />
+			<int key="@@case_index" value="7" />
+			<int key="identity:id" value="7" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="8" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Bezahlung" />
+			<date key="time:timestamp" value="2025-03-03T12:15:00+00:00" />
+			<string key="org:resource" value="Dora" />
+			<int key="@@index" value="8" />
+			<int key="@@case_index" value="8" />
+			<int key="identity:id" value="8" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="9" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Versand" />
+			<date key="time:timestamp" value="2025-03-03T12:45:00+00:00" />
+			<string key="org:resource" value="Erik" />
+			<int key="@@index" value="9" />
+			<int key="@@case_index" value="9" />
+			<int key="identity:id" value="9" />
+			<list key="po_successors">
+				<values>
+				</values>
+			</list>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="case_2" />
+		<event>
+			<string key="concept:name" value="Kundenanfrage" />
+			<date key="time:timestamp" value="2025-03-05T09:00:00+00:00" />
+			<string key="org:resource" value="Empfang" />
+			<int key="@@index" value="10" />
+			<int key="@@case_index" value="0" />
+			<int key="identity:id" value="0" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="1" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Beratung" />
+			<date key="time:timestamp" value="2025-03-05T09:25:00+00:00" />
+			<string key="org:resource" value="Anna" />
+			<int key="@@index" value="11" />
+			<int key="@@case_index" value="1" />
+			<int key="identity:id" value="1" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="2" />
+					<string key="1" value="3" />
+					<string key="2" value="4" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Hotel buchen" />
+			<date key="time:timestamp" value="2025-03-05T09:55:00+00:00" />
+			<string key="org:resource" value="Clara" />
+			<int key="@@index" value="12" />
+			<int key="@@case_index" value="2" />
+			<int key="identity:id" value="2" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="7" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Rückflug suchen" />
+			<date key="time:timestamp" value="2025-03-05T10:00:00+00:00" />
+			<string key="org:resource" value="Frida" />
+			<int key="@@index" value="13" />
+			<int key="@@case_index" value="3" />
+			<int key="identity:id" value="3" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="5" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Hinflug suchen" />
+			<date key="time:timestamp" value="2025-03-05T10:05:00+00:00" />
+			<string key="org:resource" value="Ben" />
+			<int key="@@index" value="14" />
+			<int key="@@case_index" value="4" />
+			<int key="identity:id" value="4" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="5" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Flugpaket erstellen" />
+			<date key="time:timestamp" value="2025-03-05T10:35:00+00:00" />
+			<string key="org:resource" value="Ben" />
+			<int key="@@index" value="15" />
+			<int key="@@case_index" value="5" />
+			<int key="identity:id" value="5" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="6" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Sitzplätze wählen" />
+			<date key="time:timestamp" value="2025-03-05T11:10:00+00:00" />
+			<string key="org:resource" value="Ben" />
+			<int key="@@index" value="16" />
+			<int key="@@case_index" value="6" />
+			<int key="identity:id" value="6" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="7" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Reiseunterlagen zusammenstellen" />
+			<date key="time:timestamp" value="2025-03-05T11:40:00+00:00" />
+			<string key="org:resource" value="Anna" />
+			<int key="@@index" value="17" />
+			<int key="@@case_index" value="7" />
+			<int key="identity:id" value="7" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="8" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Bezahlung" />
+			<date key="time:timestamp" value="2025-03-05T12:15:00+00:00" />
+			<string key="org:resource" value="Dora" />
+			<int key="@@index" value="18" />
+			<int key="@@case_index" value="8" />
+			<int key="identity:id" value="8" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="9" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Versand" />
+			<date key="time:timestamp" value="2025-03-05T12:45:00+00:00" />
+			<string key="org:resource" value="Erik" />
+			<int key="@@index" value="19" />
+			<int key="@@case_index" value="9" />
+			<int key="identity:id" value="9" />
+			<list key="po_successors">
+				<values>
+				</values>
+			</list>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="case_3" />
+		<event>
+			<string key="concept:name" value="Kundenanfrage" />
+			<date key="time:timestamp" value="2025-03-07T09:00:00+00:00" />
+			<string key="org:resource" value="Empfang" />
+			<int key="@@index" value="20" />
+			<int key="@@case_index" value="0" />
+			<int key="identity:id" value="0" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="1" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Beratung" />
+			<date key="time:timestamp" value="2025-03-07T09:25:00+00:00" />
+			<string key="org:resource" value="Anna" />
+			<int key="@@index" value="21" />
+			<int key="@@case_index" value="1" />
+			<int key="identity:id" value="1" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="2" />
+					<string key="1" value="3" />
+					<string key="2" value="4" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Hinflug suchen" />
+			<date key="time:timestamp" value="2025-03-07T09:55:00+00:00" />
+			<string key="org:resource" value="Ben" />
+			<int key="@@index" value="22" />
+			<int key="@@case_index" value="2" />
+			<int key="identity:id" value="2" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="5" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Hotel buchen" />
+			<date key="time:timestamp" value="2025-03-07T10:01:00+00:00" />
+			<string key="org:resource" value="Clara" />
+			<int key="@@index" value="23" />
+			<int key="@@case_index" value="3" />
+			<int key="identity:id" value="3" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="6" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Rückflug suchen" />
+			<date key="time:timestamp" value="2025-03-07T10:06:00+00:00" />
+			<string key="org:resource" value="Frida" />
+			<int key="@@index" value="24" />
+			<int key="@@case_index" value="4" />
+			<int key="identity:id" value="4" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="5" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Flugpaket erstellen" />
+			<date key="time:timestamp" value="2025-03-07T10:35:00+00:00" />
+			<string key="org:resource" value="Ben" />
+			<int key="@@index" value="25" />
+			<int key="@@case_index" value="5" />
+			<int key="identity:id" value="5" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="6" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Reiseunterlagen zusammenstellen" />
+			<date key="time:timestamp" value="2025-03-07T11:10:00+00:00" />
+			<string key="org:resource" value="Anna" />
+			<int key="@@index" value="26" />
+			<int key="@@case_index" value="6" />
+			<int key="identity:id" value="6" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="7" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Bezahlung" />
+			<date key="time:timestamp" value="2025-03-07T11:40:00+00:00" />
+			<string key="org:resource" value="Dora" />
+			<int key="@@index" value="27" />
+			<int key="@@case_index" value="7" />
+			<int key="identity:id" value="7" />
+			<list key="po_successors">
+				<values>
+					<string key="0" value="8" />
+				</values>
+			</list>
+		</event>
+		<event>
+			<string key="concept:name" value="Versand" />
+			<date key="time:timestamp" value="2025-03-07T12:15:00+00:00" />
+			<string key="org:resource" value="Erik" />
+			<int key="@@index" value="28" />
+			<int key="@@case_index" value="8" />
+			<int key="identity:id" value="8" />
+			<list key="po_successors">
+				<values>
+				</values>
+			</list>
+		</event>
+	</trace>
+</log>
