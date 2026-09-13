@@ -13,3 +13,6 @@ dist/
 
 # Generated output (figures, measurement protocols)
 gen/
+
+# Evaluation logs (downloaded, see data/README.md)
+data/benchmark/
