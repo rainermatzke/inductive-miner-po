@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Editors, environments
+.venv/
+.vscode/
+.idea/
+
+# Generated output (figures, measurement protocols)
+gen/

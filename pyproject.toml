@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inductive-miner-po"
+version = "0.1.0"
+description = "Inductive Miner for partially ordered event logs: concurrency-enriched DFG discovery on top of PM4Py"
+readme = "README.md"
+license = {text = "AGPL-3.0-or-later"}
+authors = [{name = "Rainer Matzke"}]
+requires-python = ">=3.9"
+dependencies = [
+    "pm4py>=2.7",
+    "networkx",
+    "pandas",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+
+[project.urls]
+Repository = "https://github.com/rainermatzke/inductive-miner-po"
+
+[project.optional-dependencies]
+vis = ["matplotlib", "pydot"]
+test = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pm4py_partorder*", "pm4py_bugfix*"]
