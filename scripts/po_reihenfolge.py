@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Does ``pm4py.fitness_alignments`` read the partial order? -- No, only the row order.
 
-Belongs to the thesis' limitations section (why fitness and precision are not
-measured). The same partially ordered log is replayed twice against the model
+The same partially ordered log is replayed twice against the model
 discovered from it: once in the order the events are stored in the XES file,
 once with the row order of every trace reversed. ``po_successors`` is left
 untouched both times. If PM4Py read the partial order, both values would be

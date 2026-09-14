@@ -41,7 +41,7 @@ see ``data/README.md``, section "Lifecycle logs". Only the ``W_`` events of the
 full BPI 2012 / 2017 logs carry ``start``/``complete``; the ``alog``/``olog``
 cut-outs are atomic and useless for the lifecycle oracle.
 
-Results (thesis, limitations section): teleclaims and reviewing 0 overlaps,
+Results on the four lifecycle logs: teleclaims and reviewing 0 overlaps,
 identical DFGs and trees; BPI 2012 17 new marked edges, BPI 2017 58 -- and the
 same flower tree on both paths in both cases.
 

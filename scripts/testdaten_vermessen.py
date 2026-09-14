@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""How much partial order the evaluation logs carry -- the figures of the thesis' log table.
+"""How much partial order the evaluation logs carry.
 
 Per XES file the script counts, per trace and on the transitive closure of the
 trace graph built from ``po_successors``, what makes a log a *partially
-ordered* log. Exactly the columns the thesis reports (evaluation chapter,
-table on the concurrency of the logs, plus one sentence on start events):
+ordered* log:
 
 ``traces``
     partial-order variants (one representative each in these logs).

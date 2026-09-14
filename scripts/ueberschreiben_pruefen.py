@@ -2,8 +2,7 @@
 """Does overwriting counted frequencies with the concurrency mark change a tree? -- No.
 
 The enrichment writes every concurrent pair into the DFG with frequency 0, even
-where the ordinary DFG already counted that edge (thesis, implementation
-chapter). IM_D decides its cuts on the edge set, not on frequencies, so the
+where the ordinary DFG already counted that edge. IM_D decides its cuts on the edge set, not on frequencies, so the
 overwrite should not matter. This control run checks it on the six evaluation
 logs: the enriched DFG is discovered twice, once as produced and once with the
 sequentially counted frequency restored wherever the mark set it to 0. On all

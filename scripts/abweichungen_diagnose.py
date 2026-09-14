@@ -20,7 +20,7 @@ answering one question with data rather than a guess:
 4. **The two additional self-loops of bpi2019_C:** the cases they occur in and
    whether the tree changes without them.
 
-Finally (without ``--log``) the second figure of the same thesis paragraph: the
+Finally (without ``--log``) the complementary figure: the
 marked edges (frequency 0) never add an edge the ordinary DFG lacks (116 / 0 over
 the six logs) -- the same number as ``marked/new`` in ``anreicherung_vergleich.py``.
 

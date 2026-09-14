@@ -46,7 +46,7 @@ files under `Test_POLogs_ICPM_TokenReplayForPO/` are needed here.
 
 ## Lifecycle logs (second oracle mode)
 
-Section 5.6 of the thesis contrasts the alpha oracle with the **lifecycle
+`scripts/orakel_vergleich.py` contrasts the alpha oracle with the **lifecycle
 oracle** of the same tool on four logs. These partially ordered logs are not
 distributed; they are derived with Sabine Folz-Weinstein's Configurable
 Concurrency Oracle (CCO) at a pinned commit:
@@ -60,7 +60,7 @@ cd cco && python -m cco <sequential.xes> <partially-ordered.xes> \
 ```
 
 The CCO writes a `concurrencies.csv` (the pairs it found) into its working
-directory. Inputs and outputs used in the thesis:
+directory. Inputs and outputs:
 
 | Sequential input | Source | Output (`data/benchmark/lifecycle/`) |
 |---|---|---|
@@ -72,7 +72,7 @@ Only the full BPI logs carry `start`/`complete` on their `W_` work items; the
 `alog`/`olog` cut-outs are atomic. The derivation is deterministic in content
 but not byte-identical (pm4py writes the XES header extensions in varying
 order), so no MD5 is given; `scripts/orakel_vergleich.py` recomputes the
-figures of the thesis from a derived log and its sequential source.
+figures from a derived log and its sequential source.
 
 Note for the lifecycle mode: the CCO exports `start` and `complete` events as
 nodes and, on BPI 2017, chains through the `start` nodes. Filtering a derived
