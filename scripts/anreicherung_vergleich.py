@@ -23,8 +23,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from benchmark_logs import (PAARE, PO_DIR, SEQ_DIR, modell_partiell,  # noqa: E402
-                            modell_sequentiell, nur_complete, ohne_balken, pruefe_daten)
+from benchmark_logs import (PO_DIR, SEQ_DIR, modell_partiell,  # noqa: E402
+                            modell_sequentiell, nur_complete, ohne_balken, pruefe_daten,
+                            waehle)
 
 
 def paare(kanten) -> set:
@@ -50,7 +51,7 @@ def aktivitaeten(kanten, start, ende) -> set:
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--log", action="append", help="consider only this log (repeatable)")
+    p.add_argument("--log", action="append", help="consider only this pair (repeatable)")
     args = p.parse_args()
 
     logging.disable(logging.CRITICAL)
@@ -59,11 +60,7 @@ def main() -> int:
     import pm4py
     from pm4py_partorder import discover_dfg_partial_order, read_xes
 
-    paarliste = [x for x in PAARE if not args.log or x[0] in args.log]
-    if not paarliste:
-        print(f"no log matches {args.log}; known: {', '.join(n for n, _, _ in PAARE)}",
-              file=sys.stderr)
-        return 1
+    paarliste = waehle(args.log)
     pruefe_daten(paarliste)
 
     print(f"{'Log':17} {'act.':5} {'edges seq':10} {'part.':6} {'only part.':11} "

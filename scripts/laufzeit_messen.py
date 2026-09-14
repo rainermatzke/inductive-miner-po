@@ -33,7 +33,7 @@ end up.
 Usage:
   python scripts/laufzeit_messen.py
   ... --laeufe 7                # more repetitions
-  ... --log teleclaims          # a single log
+  ... --log NAME                # a single pair (repeatable)
 """
 
 import argparse
@@ -46,8 +46,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from benchmark_logs import (PAARE, PO_DIR, SEQ_DIR, _als_dfg, nur_complete,  # noqa: E402
-                            ohne_balken, pruefe_daten, varianten)
+from benchmark_logs import (PO_DIR, SEQ_DIR, _als_dfg, nur_complete,  # noqa: E402
+                            ohne_balken, pruefe_daten, varianten, waehle)
 
 
 def median_ms(funktion, laeufe: int) -> float:
@@ -64,7 +64,7 @@ def median_ms(funktion, laeufe: int) -> float:
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--log", action="append", help="measure only this log (repeatable)")
+    p.add_argument("--log", action="append", help="measure only this pair (repeatable)")
     p.add_argument("--laeufe", type=int, default=5, help="repetitions (default: 5)")
     args = p.parse_args()
 
@@ -74,11 +74,7 @@ def main() -> int:
     import pm4py
     from pm4py_partorder import discover_dfg_partial_order, read_xes
 
-    paare = [x for x in PAARE if not args.log or x[0] in args.log]
-    if not paare:
-        print(f"no log matches {args.log}; known: {', '.join(n for n, _, _ in PAARE)}",
-              file=sys.stderr)
-        return 1
+    paare = waehle(args.log)
     pruefe_daten(paare)
     print(f"{'Log':16} | {'partial order/IM_D':>22} | {'total order/IM_D (variants)':>30}")
     print(f"{'':16} | {'traces':>6} {'build':>7} {'IM_D':>7} | "

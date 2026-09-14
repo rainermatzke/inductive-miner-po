@@ -5,10 +5,7 @@ The same partially ordered log is replayed twice against the model
 discovered from it: once in the order the events are stored in the XES file,
 once with the row order of every trace reversed. ``po_successors`` is left
 untouched both times. If PM4Py read the partial order, both values would be
-equal; in fact they diverge widely (pm4py 2.7.19.8):
-
-    teleclaims: as stored 0.9643 (75 % fitting) | reversed 0.2154 (0 %)
-    reviewing:  as stored 1.0000 (100 % fitting) | reversed 0.9732 (46 %)
+equal; in fact they diverge, on some logs widely (measured with pm4py 2.7.19.8).
 
 The reversal is deliberately crude -- it is no linearisation of the partial
 order but violates it. That is the point: the script only shows that the row
@@ -18,9 +15,11 @@ New timestamps are required because PM4Py sorts the events of a case by
 ``time:timestamp``; without them the reversal would be undone on import.
 
 Usage:
-  python scripts/po_reihenfolge.py
+  python scripts/po_reihenfolge.py               # every pair
+  python scripts/po_reihenfolge.py --log NAME    # only this pair (repeatable)
 """
 
+import argparse
 import logging
 import sys
 import warnings
@@ -35,12 +34,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import pandas as pd  # noqa: E402
 import pm4py  # noqa: E402
 
-from benchmark_logs import PO_DIR, modell_partiell, pruefe_daten  # noqa: E402
-
-LOGS = [
-    ("teleclaims", "teleclaims_alpha_logwise_oneRperPoVar.xes"),
-    ("reviewing", "reviewing_alpha_logwise_oneRperPoVar.xes"),
-]
+from benchmark_logs import PO_DIR, modell_partiell, pruefe_daten, waehle  # noqa: E402
 
 
 def umgekehrt(log: pd.DataFrame) -> pd.DataFrame:
@@ -55,8 +49,13 @@ def umgekehrt(log: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> None:
-    pruefe_daten([p for p in __import__("benchmark_logs").PAARE if p[0] in dict(LOGS)])
-    for name, datei in LOGS:
+    p = argparse.ArgumentParser(description=__doc__,
+                                formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--log", action="append", help="replay only this pair (repeatable)")
+    args = p.parse_args()
+    paare = waehle(args.log)
+    pruefe_daten(paare)
+    for name, datei, _ in paare:
         log = pm4py.read_xes(str(PO_DIR / datei), show_progress_bar=False)
         netz, im, fm = pm4py.convert_to_petri_net(modell_partiell(log))
         f1 = pm4py.fitness_alignments(log, netz, im, fm)

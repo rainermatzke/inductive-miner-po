@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Does the effect of the enrichment depend on the oracle? -- the counter-experiment.
 
-``anreicherung_vergleich.py`` measures the six evaluation logs, and there the
-concurrency mark never adds an edge (marked/new = 6/0, 2/0, 24/0, 24/0, 56/0,
-4/0). That is a property of the **oracle**, not of the case numbers: in alpha
+``anreicherung_vergleich.py`` measures the evaluation log pairs; for logs
+derived with the alpha oracle the concurrency mark never adds an edge
+(``marked/new`` = n/0). That is a property of the **oracle**, not of the case
+numbers: in alpha
 mode the CCO declares two activities concurrent exactly when they directly
 follow each other in both orders somewhere in the log -- the very condition that
 puts both edges into the ordinary DFG. In **lifecycle mode** this does not hold:
@@ -18,36 +19,29 @@ source log) with the same figures, plus two things the lifecycle case needs:
   another instance is open (interval against interval) and whether an atomic
   event (``complete`` without an open ``start``) falls inside an open instance.
   That is the raw material of the lifecycle oracle; with 0 cases it cannot find
-  anything (teleclaims, reviewing).
+  anything.
 * **Projection onto the complete events with bridging.** In lifecycle mode the
-  CCO exports ``start`` and ``complete`` events as nodes and, on BPI 2017,
+  CCO exports ``start`` and ``complete`` events as nodes and, on some logs,
   chains through the ``start`` nodes (complete -> start -> complete). A plain
   row filter on ``complete`` tears these chains apart, and ``start`` events
   without a ``complete`` (aborted work items) stand isolated -- both make events
-  look concurrent to everything (388 marked edges, 17 start activities, all
-  artefact). Therefore the reachability among the complete events is computed
+  look concurrent to everything (hundreds of marked edges, all artefact).
+  Therefore the reachability among the complete events is computed
   over the full graph and its transitive reduction written back as covering
-  edges. On BPI 2012, where the start events are isolated anyway, this yields
-  the same figures as the plain filter.
+  edges. Where the start events are isolated anyway, this yields the same
+  figures as the plain filter.
 
 **The comparison base matters.** The second log must be the *real* sequential
 source log. Linearising the reduced PO log over its timestamps instead makes the
-mark add edges everywhere (6/4, 2/0, 24/3, 24/0, 56/18, 4/1 on the six logs):
-the reduction to one representative per variant discards exactly the evidence
+mark add edges everywhere: the reduction to one representative per variant discards exactly the evidence
 that a pair occurred in both orders.
 
 How the lifecycle logs are derived (the CCO is not part of this repository):
-see ``data/README.md``, section "Lifecycle logs". Only the ``W_`` events of the
-full BPI 2012 / 2017 logs carry ``start``/``complete``; the ``alog``/``olog``
-cut-outs are atomic and useless for the lifecycle oracle.
-
-Results on the four lifecycle logs: teleclaims and reviewing 0 overlaps,
-identical DFGs and trees; BPI 2012 17 new marked edges, BPI 2017 58 -- and the
-same flower tree on both paths in both cases.
+see ``data/README.md``, section "Lifecycle logs". The oracle needs events that
+carry ``start``/``complete``; logs with atomic events only are useless for it.
 
 Usage:
-  python scripts/orakel_vergleich.py data/benchmark/lifecycle/BPI2012_lifecycle_po.xes \\
-      data/benchmark/raw/BPI_Challenge_2012.xes
+  python scripts/orakel_vergleich.py <partially ordered log> <sequential source log>
 """
 
 import argparse

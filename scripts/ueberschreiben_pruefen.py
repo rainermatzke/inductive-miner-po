@@ -3,10 +3,10 @@
 
 The enrichment writes every concurrent pair into the DFG with frequency 0, even
 where the ordinary DFG already counted that edge. IM_D decides its cuts on the edge set, not on frequencies, so the
-overwrite should not matter. This control run checks it on the six evaluation
-logs: the enriched DFG is discovered twice, once as produced and once with the
-sequentially counted frequency restored wherever the mark set it to 0. On all
-six logs both trees are identical (2026-09-07).
+overwrite should not matter. This control run checks it on every log pair:
+the enriched DFG is discovered twice, once as produced and once with the
+sequentially counted frequency restored wherever the mark set it to 0, and
+reports whether both trees are identical.
 
 Usage:
   python scripts/ueberschreiben_pruefen.py

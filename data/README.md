@@ -1,8 +1,35 @@
 # Evaluation logs
 
+The measurement scripts work on **log pairs**: a partially ordered log and the
+sequential log it was derived from. They do not know any log by name; the pairs
+are read from a pairing file next to the logs.
+
+## Layout and pairing file
+
+```
+data/benchmark/po/         partially ordered logs (po_successors on every event)
+data/benchmark/seq/        their sequential source logs
+data/benchmark/paare.tsv   which po file belongs to which seq file
+```
+
+`paare.tsv` is tab-separated with three columns -- a short name (used by
+`--log NAME`), the file in `po/`, the file in `seq/`. A header line is
+optional, `#` starts a comment. Example with two pairs:
+
+```
+name	po	seq
+example	example_alpha_logwise_oneRperPoVar.xes	example.xes
+another	another_po.xes	another_seq.xes
+```
+
+Everything under `data/benchmark/` is ignored by git. `BENCHMARK_DATA` points
+the scripts at another directory with the same two subfolders and pairing file.
+
+## The set the thesis was evaluated on
+
 The six evaluation logs are not part of this repository. They come from two
 archives published alongside the tools of Sabine Folz-Weinstein and are
-unpacked into `data/benchmark/` (ignored by git):
+unpacked into `data/benchmark/`:
 
 | Archive | Contents | Size | MD5 |
 |---|---|---|---|
@@ -28,6 +55,20 @@ unzip -j /tmp/po.zip  'Test_POLogs_ICPM_TokenReplayForPO/*.xes' -d data/benchmar
 unzip -j /tmp/seq.zip 'RM_TestData/*.xes'                        -d data/benchmark/seq
 ```
 
+Then write the pairing file for these six pairs:
+
+```bash
+cat > data/benchmark/paare.tsv <<'END'
+name	po	seq
+BPI12_alog	BPI12_alog_alpha_logwise_oneRperPoVar.xes	BPI2012_alog.xes
+BPI12_olog	BPI12_olog_alpha_logwise_oneRperPoVar.xes	BPI2012_olog.xes
+bpi2019_C	bpi2019_C_alpha_logwise_oneRperPoVar.xes	BPI2019_C.xes
+reviewing	reviewing_alpha_logwise_oneRperPoVar.xes	reviewing.xes
+roadtrafficfine	roadtrafficfine_alpha_logwise_oneRperPoVar.xes	Road_Traffic_Fine.xes
+teleclaims	teleclaims_alpha_logwise_oneRperPoVar.xes	teleclaims.xes
+END
+```
+
 Afterwards the layout is
 
 ```
@@ -39,6 +80,7 @@ data/benchmark/po/   BPI12_alog_alpha_logwise_oneRperPoVar.xes
                      teleclaims_alpha_logwise_oneRperPoVar.xes
 data/benchmark/seq/  BPI2012_alog.xes  BPI2012_olog.xes  BPI2019_C.xes
                      reviewing.xes  Road_Traffic_Fine.xes  teleclaims.xes
+data/benchmark/paare.tsv
 ```
 
 The first archive also contains the token-replay tool itself; only the `.xes`

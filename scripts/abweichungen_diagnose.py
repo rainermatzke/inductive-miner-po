@@ -1,9 +1,10 @@
-#!/usr/bin/env python3
-"""Why do ``bpi2019_C`` and ``roadtrafficfine`` yield different trees on the two paths?
+"""Why do some log pairs yield different trees on the two paths?
 
-The enriched DFG of these two logs carries additional edges (13 and 4) and, for
-roadtrafficfine, two additional end activities. Four measurements per log, each
-answering one question with data rather than a guess:
+For every log pair the script discovers both trees -- IM_D on the enriched DFG of
+the partially ordered log and IM_D on the ordinary DFG of the sequential log --
+and examines the pairs whose trees differ. The enriched DFG of such a pair
+carries additional edges and sometimes additional end activities. Four
+measurements per pair, each answering one question with data rather than a guess:
 
 1. **Where do the additional edges come from?** For every covering edge a -> b
    the ordinary DFG lacks: in how many traces it occurs and what sits between
@@ -17,16 +18,17 @@ answering one question with data rather than a guess:
    which the tree of the sequential path comes out.
 3. **Do the additional end activities change the tree?** Enriched DFG with the
    end activities of the sequential path, and the other way round.
-4. **The two additional self-loops of bpi2019_C:** the cases they occur in and
-   whether the tree changes without them.
+4. **Additional self-loops**, if any: the cases they occur in and whether the
+   tree changes without them.
 
-Finally (without ``--log``) the complementary figure: the
-marked edges (frequency 0) never add an edge the ordinary DFG lacks (116 / 0 over
-the six logs) -- the same number as ``marked/new`` in ``anreicherung_vergleich.py``.
+Finally (without ``--log``) the complementary figure over all pairs: how many
+marked edges (frequency 0) the enriched DFGs carry and how many of them the
+ordinary DFG lacks -- the same number as ``marked/new`` in
+``anreicherung_vergleich.py``.
 
 Usage:
-  python scripts/abweichungen_diagnose.py                 # both logs
-  python scripts/abweichungen_diagnose.py --log roadtrafficfine
+  python scripts/abweichungen_diagnose.py                 # every pair whose trees differ
+  python scripts/abweichungen_diagnose.py --log NAME      # only this pair (repeatable)
 """
 
 import argparse
@@ -39,10 +41,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from benchmark_logs import (PAARE, PO_DIR, SEQ_DIR, _als_dfg,  # noqa: E402
-                            nur_complete, ohne_balken, pruefe_daten)
-
-ABWEICHEND = ("bpi2019_C", "roadtrafficfine")
+from benchmark_logs import (PO_DIR, SEQ_DIR, _als_dfg, nur_complete,  # noqa: E402
+                            ohne_balken, pruefe_daten, waehle)
 
 
 def baum(kanten: dict, start: dict, ende: dict) -> str:
@@ -126,7 +126,8 @@ def greedy_minimal(k_po, s_po, e_po, neu: set, ziel: str) -> set:
     return noetig
 
 
-def diagnose(name, po_datei, seq_datei) -> None:
+def lade_paar(po_datei, seq_datei):
+    """Both logs, both DFGs and both trees of one pair."""
     import pm4py
     from pm4py_partorder import discover_dfg_partial_order, read_xes
 
@@ -134,6 +135,12 @@ def diagnose(name, po_datei, seq_datei) -> None:
     seq, _ = nur_complete(read_xes(str(SEQ_DIR / seq_datei), parameters=ohne_balken()))
     k_po, s_po, e_po = discover_dfg_partial_order(po)
     k_sq, s_sq, e_sq = pm4py.discover_dfg(seq)
+    return po, (k_po, s_po, e_po), (k_sq, s_sq, e_sq)
+
+
+def diagnose(name, po, dfg_po, dfg_sq) -> None:
+    k_po, s_po, e_po = dfg_po
+    k_sq, s_sq, e_sq = dfg_sq
     b_po, b_sq = baum(k_po, s_po, e_po), baum(k_sq, s_sq, e_sq)
     neu = set(k_po) - set(k_sq)
     hasse = hasse_je_trace(po)
@@ -145,7 +152,7 @@ def diagnose(name, po_datei, seq_datei) -> None:
     hk = herkunft(neu, hasse)
     print(f"\n1. origin of the {len(neu)} additional edges a -> b")
     print(f"   {'':70} traces  split(a) join(b)  other")
-    for a, b in sorted(neu, key=lambda k: -k_po[k]):
+    for a, b in sorted(neu, key=lambda k: (-k_po[k], k)):
         t, sp, jn, so = hk[(a, b)]
         print(f"   {a[:32]:34} -> {b[:32]:34} {t:5d} {sp:8d} {jn:8d} {so:6d}")
     summe = [sum(hk[k][i] for k in neu) for i in range(4)]
@@ -191,19 +198,12 @@ def diagnose(name, po_datei, seq_datei) -> None:
               f"{'= partial tree (they change no cut)' if b_ohne_schleifen == b_po else '!= partial tree'}")
 
 
-def markierung_legt_nichts_an() -> None:
-    """The marked edges (frequency 0) are never new -- same figure as anreicherung_vergleich.py."""
-    import pm4py
-    from pm4py_partorder import discover_dfg_partial_order, read_xes
-
-    print("\n=== marked edges (frequency 0) over all six logs ===")
+def markierung_legt_nichts_an(dfgs) -> None:
+    """How many marked edges (frequency 0) the ordinary DFG lacks -- same figure as anreicherung_vergleich.py."""
+    print("\n=== marked edges (frequency 0) over all pairs ===")
     print(f"   {'log':17} marked  of which new")
     summe = [0, 0]
-    for name, po_datei, seq_datei in PAARE:
-        po = read_xes(str(PO_DIR / po_datei), parameters=ohne_balken())
-        seq, _ = nur_complete(read_xes(str(SEQ_DIR / seq_datei), parameters=ohne_balken()))
-        k_po, _, _ = discover_dfg_partial_order(po)
-        k_sq, _, _ = pm4py.discover_dfg(seq)
+    for name, k_po, k_sq in dfgs:
         mark = {k for k, n in k_po.items() if n == 0}
         neu = mark - set(k_sq)
         summe[0] += len(mark)
@@ -215,16 +215,24 @@ def markierung_legt_nichts_an() -> None:
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--log", action="append", choices=ABWEICHEND)
+    p.add_argument("--log", action="append", help="examine only this pair (repeatable)")
     args = p.parse_args()
     logging.disable(logging.CRITICAL)
     warnings.simplefilter("ignore")
-    pruefe_daten()
-    for name, po_datei, seq_datei in PAARE:
-        if name in (args.log or ABWEICHEND):
-            diagnose(name, po_datei, seq_datei)
+    paare = waehle(args.log)
+    pruefe_daten(paare)
+    dfgs, gleich = [], []
+    for name, po_datei, seq_datei in paare:
+        po, dfg_po, dfg_sq = lade_paar(po_datei, seq_datei)
+        dfgs.append((name, dfg_po[0], dfg_sq[0]))
+        if baum(*dfg_po) == baum(*dfg_sq):
+            gleich.append(name)
+            continue
+        diagnose(name, po, dfg_po, dfg_sq)
+    if gleich:
+        print(f"\nsame tree on both paths, nothing to diagnose: {', '.join(gleich)}")
     if not args.log:
-        markierung_legt_nichts_an()
+        markierung_legt_nichts_an(dfgs)
     return 0
 
 

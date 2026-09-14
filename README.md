@@ -20,7 +20,7 @@ scripts needed to reproduce its measurements.
 | `pm4py_partorder/` | the method: `read_xes`, `concurrent_pairs`, `discover_dfg_partial_order`, Hasse diagram visualisation |
 | `pm4py_bugfix/` | runtime patch for a bug in PM4Py's `iterparse` XES importer that drops `<list>` attributes (see below) |
 | `examples/` | the travel-agency example used throughout the thesis: `reisebuero.xes` and `reisebuero.py` (read, enriched DFG, process tree, Hasse diagrams) |
-| `data/` | where the six evaluation logs go; `data/README.md` says where to download them |
+| `data/` | where the evaluation logs and their pairing file go; `data/README.md` describes the format and the set the thesis was evaluated on, including where to download it |
 | `tests/` | the three constructed cases from the thesis' evaluation: nested concurrency, the N-structure, self-concurrency (`python -m unittest discover -s tests`) |
 | `scripts/` | the measurement scripts behind the thesis' evaluation, see *Reproducing the measurements* below |
 
@@ -62,10 +62,9 @@ Everything after `discover_dfg_partial_order` is plain PM4Py.
 
 A partially ordered log is an ordinary XES file in which every event carries a `po_successors`
 list attribute naming its direct successors (the Hasse successors). Timestamps are not used to
-derive the order. The sample logs in `data/` follow this format; the six evaluation logs were
-produced with the Configurable Concurrency Oracle from sequential public logs (BPI Challenge
-2012 and 2019, Road Traffic Fine Management, `reviewing` and `teleclaims` from the *Process
-Mining* book material), reduced to one representative per partial-order variant.
+derive the order. `examples/reisebuero.xes` follows this format, and so do the evaluation logs
+described in `data/README.md`, which were produced with the Configurable Concurrency Oracle from
+sequential public logs and reduced to one representative per partial-order variant.
 
 ## The PM4Py list bug
 
@@ -77,13 +76,15 @@ runtime without touching any file; `read_xes` applies it by default (`listenbug_
 
 ## Reproducing the measurements
 
-1. Fetch the six evaluation log pairs as described in `data/README.md` (two archives, about
-   250 MB unpacked, into `data/benchmark/po` and `data/benchmark/seq`). To keep them
-   elsewhere, point `BENCHMARK_DATA` at a directory with those two subfolders.
-2. Run a script from anywhere; each finds `scripts/benchmark_logs.py` next to itself. A
-   missing log stops the script with a message naming the file. `--log NAME` (repeatable)
-   restricts most scripts to one of `BPI12_alog`, `BPI12_olog`, `bpi2019_C`, `reviewing`,
-   `roadtrafficfine`, `teleclaims`; `--help` lists the remaining options.
+1. Put the log pairs in place: partially ordered logs under `data/benchmark/po`, their
+   sequential source logs under `data/benchmark/seq`, and a pairing file
+   `data/benchmark/paare.tsv` that names them (format and the six pairs the thesis was
+   evaluated on, with download links: `data/README.md`). To keep the logs elsewhere, point
+   `BENCHMARK_DATA` at a directory with those two subfolders and the pairing file.
+2. Run a script from anywhere; each finds `scripts/benchmark_logs.py` next to itself, which
+   reads the pairing file. A missing file stops the script with a message naming it.
+   `--log NAME` (repeatable) restricts most scripts to one pair by its name from the pairing
+   file; `--help` lists the remaining options.
 
 ```bash
 python scripts/anreicherung_vergleich.py --log reviewing
@@ -95,9 +96,9 @@ python scripts/anreicherung_vergleich.py --log reviewing
 | `testdaten_vermessen.py` | How large are the logs and how much partial order do they carry (chains, N-structures, several end events)? Takes XES paths or directories, defaults to `data/benchmark/po` | the partially ordered logs |
 | `anreicherung_vergleich.py` | Ordinary against enriched DFG per log pair: edges, mutual pairs, self-loops, same process tree? | the log pairs |
 | `laufzeit_messen.py` | Runtime of both paths, split into DFG construction and IM_D run; `--laeufe N` sets the repetitions | the log pairs |
-| `abweichungen_diagnose.py` | Why do `bpi2019_C` and `roadtrafficfine` yield different trees: origin of the additional edges, ablation per edge, end activities, self-loops, marked edges that are new? | those two log pairs |
+| `abweichungen_diagnose.py` | For every pair whose trees differ: origin of the additional edges, ablation per edge, end activities, self-loops; plus marked edges that are new over all pairs | the log pairs |
 | `ueberschreiben_pruefen.py` | Control run: does overwriting counted frequencies with the concurrency mark change any tree? (No.) | the log pairs |
-| `po_reihenfolge.py` | Control run: does PM4Py's alignment fitness read the partial order? (No, only the row order.) | the partially ordered logs |
+| `po_reihenfolge.py` | Control run: does PM4Py's alignment fitness read the partial order? (No, only the row order.) | the log pairs |
 | `orakel_vergleich.py PO SEQ` | The lifecycle oracle as counter-experiment: overlaps in the sequential log, projection onto complete events, marked edges that are new, same tree? | a lifecycle log derived with the CCO and its sequential source, see `data/README.md` |
 
 All scripts print to stdout; nothing is written into the repository (`gen/` is ignored by
