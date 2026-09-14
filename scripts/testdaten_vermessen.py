@@ -1,23 +1,13 @@
 #!/usr/bin/env python3
-"""Key figures of the partially ordered logs: size and how much partial order they carry.
+"""How much partial order the evaluation logs carry -- the figures of the thesis' log table.
 
-Per XES file the script counts what makes a log a *partially ordered* log:
-traces and events, but above all the order itself -- how many traces are a
-plain chain, how many contain the N-structure, how many end in more than one
-event. All order measures are determined per trace on the transitive closure
-of the trace graph built from ``po_successors``.
+Per XES file the script counts, per trace and on the transitive closure of the
+trace graph built from ``po_successors``, what makes a log a *partially
+ordered* log. Exactly the columns the thesis reports (evaluation chapter,
+table on the concurrency of the logs, plus one sentence on start events):
 
-Columns
--------
-``traces``, ``events``, ``act.``
-    cases, events and distinct activity names.
-``ev./trace``
-    smallest, median and largest trace.
-``edges``
-    covering edges from ``po_successors``, summed over all traces.
-``po missing``
-    events whose ``po_successors`` arrives as ``None`` -- with the list-bug fix
-    of ``read_xes`` this must be 0; otherwise all following columns are too small.
+``traces``
+    partial-order variants (one representative each in these logs).
 ``total order``
     traces whose closure has the full n(n-1)/2 edges, i.e. a plain chain.
 ``multi start`` / ``multi end``
@@ -27,9 +17,6 @@ Columns
     (Valdes, Tarjan & Lawler 1982): four events with exactly the edges a->c,
     b->c, b->d and the remaining three pairs incomparable. Such traces are
     not series-parallel and admit no block decomposition.
-``DFG edges``
-    edges of the discovered enriched DFG, in brackets those with frequency 0
-    (the unordered activity pairs, entered in both directions).
 
 Usage:
   python scripts/testdaten_vermessen.py                 # all logs in data/benchmark/po
@@ -38,16 +25,16 @@ Usage:
 """
 
 import argparse
-import statistics
 import sys
 import warnings
 from pathlib import Path
 from typing import Dict, List, Set
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from benchmark_logs import PO_DIR, ohne_balken                       # noqa: E402
-from pm4py_partorder import discover_dfg_partial_order, read_xes    # noqa: E402
+from pm4py_partorder import read_xes                                # noqa: E402
 from pm4py_partorder.partial_order_dfg import _extract_succ_ids     # noqa: E402
 
 # Above this trace size the N-structure search is skipped; it is quadratic in
@@ -59,28 +46,21 @@ MAX_KNOTEN_N = 400
 class Kennzahlen:
     def __init__(self, name: str):
         self.name = name
-        self.traces = self.events = 0
-        self.aktivitaeten: set = set()
-        self.trace_laengen: List[int] = []
-        self.kanten = 0
-        self.po_fehlt = 0
+        self.traces = 0
         self.total_geordnet = 0
         self.mehrfach_start = self.mehrfach_ende = 0
         self.n_struktur = 0
         self.n_uebersprungen = 0
-        self.dfg_kanten = self.dfg_nullkanten = 0
 
 
-def _trace_graph(ids, nachfolger):
-    """Successor lists of one trace; second return value: missing po_successors."""
+def _trace_graph(ids, nachfolger) -> Dict[int, Set[int]]:
+    """Successor lists of one trace (missing ``po_successors`` count as none)."""
     succ: Dict[int, Set[int]] = {eid: set() for eid in ids}
-    fehlt = 0
     for eid, zelle in zip(ids, nachfolger):
         if zelle is None or (isinstance(zelle, float) and zelle != zelle):
-            fehlt += 1
             continue
         succ[eid] = {s for s in _extract_succ_ids(zelle) if s in succ}
-    return succ, fehlt
+    return succ
 
 
 def _huelle(succ: Dict[int, Set[int]]) -> Dict[int, Set[int]]:
@@ -132,59 +112,42 @@ def _hat_n_struktur(huelle: Dict[int, Set[int]]) -> bool:
 def vermesse(pfad: Path, max_knoten: int) -> Kennzahlen:
     k = Kennzahlen(pfad.name.split("_alpha")[0])
     with warnings.catch_warnings():
-        warnings.simplefilter("ignore")             # missing po_successors are counted here
+        warnings.simplefilter("ignore")
         log = read_xes(str(pfad), parameters=ohne_balken())
 
-        k.events = len(log)
-        k.aktivitaeten = set(log["concept:name"])
-        if not {"identity:id", "po_successors"} <= set(log.columns):
-            raise SystemExit(f"{pfad.name}: no identity:id/po_successors -- not a partially ordered log")
+    if not {"identity:id", "po_successors"} <= set(log.columns):
+        raise SystemExit(f"{pfad.name}: no identity:id/po_successors -- not a partially ordered log")
 
-        for _, trace_df in log.groupby("case:concept:name", sort=False):
-            k.traces += 1
-            ids = [int(i) for i in trace_df["identity:id"]]
-            succ, fehlt = _trace_graph(ids, trace_df["po_successors"])
-            n = len(succ)
-            k.trace_laengen.append(n)
-            k.kanten += sum(len(s) for s in succ.values())
-            k.po_fehlt += fehlt
+    for _, trace_df in log.groupby("case:concept:name", sort=False):
+        k.traces += 1
+        ids = [int(i) for i in trace_df["identity:id"]]
+        succ = _trace_graph(ids, trace_df["po_successors"])
+        n = len(succ)
 
-            eingang = {w for s in succ.values() for w in s}
-            if sum(1 for v in succ if v not in eingang) > 1:
-                k.mehrfach_start += 1
-            if sum(1 for v in succ if not succ[v]) > 1:
-                k.mehrfach_ende += 1
+        eingang = {w for s in succ.values() for w in s}
+        if sum(1 for v in succ if v not in eingang) > 1:
+            k.mehrfach_start += 1
+        if sum(1 for v in succ if not succ[v]) > 1:
+            k.mehrfach_ende += 1
 
-            huelle = _huelle(succ)
-            if sum(len(s) for s in huelle.values()) == n * (n - 1) // 2:
-                k.total_geordnet += 1
-            if n > max_knoten:
-                k.n_uebersprungen += 1
-            elif _hat_n_struktur(huelle):
-                k.n_struktur += 1
-
-        dfg, _, _ = discover_dfg_partial_order(log)
-
-    k.dfg_kanten = len(dfg)
-    k.dfg_nullkanten = sum(1 for f in dfg.values() if f == 0)
+        huelle = _huelle(succ)
+        if sum(len(s) for s in huelle.values()) == n * (n - 1) // 2:
+            k.total_geordnet += 1
+        if n > max_knoten:
+            k.n_uebersprungen += 1
+        elif _hat_n_struktur(huelle):
+            k.n_struktur += 1
     return k
 
 
 SPALTEN = [
     ("Log",         lambda k: k.name),
     ("traces",      lambda k: f"{k.traces}"),
-    ("events",      lambda k: f"{k.events}"),
-    ("act.",        lambda k: f"{len(k.aktivitaeten)}"),
-    ("ev./trace",   lambda k: "{}-{}-{}".format(
-        min(k.trace_laengen), round(statistics.median(k.trace_laengen)), max(k.trace_laengen))),
-    ("edges",       lambda k: f"{k.kanten}"),
-    ("po missing",  lambda k: f"{k.po_fehlt}"),
     ("total order", lambda k: f"{k.total_geordnet}"),
     ("multi start", lambda k: f"{k.mehrfach_start}"),
     ("multi end",   lambda k: f"{k.mehrfach_ende}"),
     ("N-structure", lambda k: f"{k.n_struktur}" + (f" (+{k.n_uebersprungen}?)"
                                                    if k.n_uebersprungen else "")),
-    ("DFG edges",   lambda k: f"{k.dfg_kanten} ({k.dfg_nullkanten})"),
 ]
 
 

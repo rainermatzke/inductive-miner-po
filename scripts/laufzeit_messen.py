@@ -14,8 +14,7 @@ therefore reduced to one representative per trace variant as well (the first
 case of each activity sequence). This is admissible because IM_D only asks
 *whether* an edge occurs: the DFG built from the variants has the same edge set
 as the one built from all cases, and the IM_D run is identical. The script
-checks this equality and also reports the full measurement on all cases for
-comparison.
+checks this equality (column ``equal?``).
 
 **Reading the XES file stays outside the measurement** -- otherwise the
 comparison would include the importer, which is the same on both sides and
@@ -89,13 +88,13 @@ def main() -> int:
               file=sys.stderr)
         return 1
     pruefe_daten(paare)
-    print(f"{'Log':16} | {'partial order/IM_D':>22} | {'total order/IM_D (variants)':>30} | all cases")
+    print(f"{'Log':16} | {'partial order/IM_D':>22} | {'total order/IM_D (variants)':>30}")
     print(f"{'':16} | {'traces':>6} {'build':>7} {'IM_D':>7} | "
-          f"{'traces':>6} {'build':>7} {'IM_D':>7} {'equal?':>7} | {'cases':>7} {'build':>8}")
+          f"{'traces':>6} {'build':>7} {'IM_D':>7} {'equal?':>7}")
     for name, po_datei, seq_datei in paare:
         po = read_xes(str(PO_DIR / po_datei), parameters=ohne_balken())
         seq, _ = nur_complete(read_xes(str(SEQ_DIR / seq_datei), parameters=ohne_balken()))
-        var, faelle, n_var = varianten(seq)
+        var, _, n_var = varianten(seq)
 
         dfg_po = _als_dfg(*discover_dfg_partial_order(po))
         dfg_var = _als_dfg(*pm4py.discover_dfg(var))
@@ -107,13 +106,12 @@ def main() -> int:
 
         t_vor_po = median_ms(lambda: discover_dfg_partial_order(po), args.laeufe)
         t_vor_var = median_ms(lambda: pm4py.discover_dfg(var), args.laeufe)
-        t_vor_all = median_ms(lambda: pm4py.discover_dfg(seq), min(args.laeufe, 3))
         t_imd_po = median_ms(lambda: pm4py.discover_process_tree_inductive(dfg_po), args.laeufe)
         t_imd_sq = median_ms(lambda: pm4py.discover_process_tree_inductive(dfg_var), args.laeufe)
 
         print(f"{name:16} | {po['case:concept:name'].nunique():6d} {t_vor_po:6.1f}m {t_imd_po:6.1f}m | "
-              f"{n_var:6d} {t_vor_var:6.1f}m {t_imd_sq:6.1f}m {'yes' if gleich else 'NO':>7} | "
-              f"{faelle:7d} {t_vor_all:7.1f}m", flush=True)
+              f"{n_var:6d} {t_vor_var:6.1f}m {t_imd_sq:6.1f}m {'yes' if gleich else 'NO':>7}",
+              flush=True)
 
     print("\nTimes in milliseconds (median), reading excluded. 'equal?' checks that the DFG")
     print("built from the variants has the same edges, start and end activities as the one from all cases.")
