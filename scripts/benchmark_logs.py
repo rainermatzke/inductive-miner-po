@@ -1,4 +1,4 @@
-"""The six evaluation logs and the two helpers every measurement script needs.
+"""The six evaluation logs and the helpers the measurement scripts share.
 
 Each entry pairs a partially ordered log (one representative per partial-order
 variant, produced with the Configurable Concurrency Oracle) with the sequential
@@ -76,6 +76,17 @@ def _als_dfg(kanten, start, ende):
     for a, n in ende.items():
         d.end_activities[a] = n
     return d
+
+
+def varianten(seq):
+    """One representative per trace variant: the first case of each activity sequence.
+
+    Returns (reduced log, number of cases, number of variants).
+    """
+    seq = seq.sort_values(["case:concept:name", "time:timestamp"], kind="stable")
+    folgen = seq.groupby("case:concept:name", sort=False)["concept:name"].agg(tuple)
+    erste = folgen.drop_duplicates().index
+    return seq[seq["case:concept:name"].isin(erste)], folgen.size, folgen.nunique()
 
 
 def modell_partiell(po_log):

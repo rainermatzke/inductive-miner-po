@@ -47,7 +47,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from benchmark_logs import (PAARE, PO_DIR, SEQ_DIR, _als_dfg, nur_complete,  # noqa: E402
-                            ohne_balken, pruefe_daten)
+                            ohne_balken, pruefe_daten, varianten)
 
 
 def median_ms(funktion, laeufe: int) -> float:
@@ -59,14 +59,6 @@ def median_ms(funktion, laeufe: int) -> float:
         if i:
             zeiten.append((time.perf_counter() - t0) * 1000)
     return statistics.median(zeiten)
-
-
-def varianten(seq):
-    """One representative per trace variant: the first case of each activity sequence."""
-    seq = seq.sort_values(["case:concept:name", "time:timestamp"], kind="stable")
-    folgen = seq.groupby("case:concept:name", sort=False)["concept:name"].agg(tuple)
-    erste = folgen.drop_duplicates().index
-    return seq[seq["case:concept:name"].isin(erste)], folgen.size, folgen.nunique()
 
 
 def main() -> int:
